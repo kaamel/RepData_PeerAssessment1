@@ -44,8 +44,7 @@ convert_to_time <- function(x) {
   paste0(as.integer(x/100),":", round((x/100 - as.integer(x/100)) * 100))
 }
 z <- tapply(na.omit(activity_data)$steps, FUN = function(x) {mean(x)}, INDEX = as.factor(na.omit(activity_data)$interval))
-max_interval <- as.numeric(which(z == max(z)))
-max_interval_str <- convert_to_time(as.numeric(names(which(z == max(z)))))
+max_interval <- names(which(z == max(z)))
 max_avg_steps <- z[(which(z == max(z)))[1]]
 plot(z, xlab = "Interval", ylab = "Average number of steps", type ="l", x = levels(factor(na.omit(activity_data)$interval)))
 abline(v = as.numeric(names(which(z == max(z)))), col=3)
@@ -53,7 +52,7 @@ abline(v = as.numeric(names(which(z == max(z)))), col=3)
 
 ![plot of chunk daily activity pattern](figure/daily activity pattern.png) 
 
-The 5-minute interval in which on average across all the days contains the most number of steps is 104.
+The 5-minute interval in which on average across all the days contains the most number of steps is 835.
 
 ## Imputing missing values
 
@@ -111,3 +110,6 @@ axis(side = 2, labels =T)
 ```
 
 ![plot of chunk are there differences between weekdays and weekends](figure/are there differences between weekdays and weekends.png) 
+
+This plot indicates that the pattern for the weekdays and weekends are different. The primary difference seems to be that most of the steps are taken in morning, prior to work hours during the week, while during the weekend it is more evenly spread out.
+

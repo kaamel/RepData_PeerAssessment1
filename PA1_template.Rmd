@@ -96,3 +96,5 @@ plot(z_weekday, xlab = "Interval", main="Weekday", ylab = "Average Daily Steps",
 axis(side = 1, labels =T)
 axis(side = 2, labels =T)
 ```
+
+This plot indicates that the pattern for the weekdays and weekends are different. The primary difference seems to be that most of the steps are taken in morning, prior to work hours during the week, while during the weekend it is more evenly spread out.

@@ -7,35 +7,39 @@ output: html_document
 ## Loading and preprocessing the data
 If the file activity.csv is not found in the current directory, it is extracted from the activity.zip file and is loaded into "activity_data".
 
-```{r get the raw data, echo=T}
+
+```r
 if (!file.exists("./activity.csv")) {
   unzip("activity.zip", files = "activity.csv", overwrite = T)
 }
 activity_data <- read.csv("activity.csv")
 ```
-```{r headers , echo=F}
-headers <- names(activity_data)
-```
 
-By examining the activity_data we can see that it has the following columns: `r headers`.
+
+By examining the activity_data we can see that it has the following columns: steps, date, interval.
 
 ## What is mean total number of steps taken per day?
 We will need to first calculate the total number of steps per day before ploting the histogram.
 
-```{r histogram of steps per day, echo=T}
+
+```r
 steps.date <- aggregate(steps ~ date, data = activity_data, FUN = sum)
 hist(steps.date$steps, breaks = 10, xlab = "Daily Number of Steps", main = "Histogram of steps per day")
 ```
 
-```{r mean total steps, echo=T}
+![plot of chunk histogram of steps per day](figure/histogram of steps per day.png) 
+
+
+```r
 mean_total_steps <- mean(steps.date$steps, na.rm = T)
 median_total_steps <- median(steps.date$steps, na.rm = T)
 ```
 
-The mean total number of steps taken per day is `r mean_total_steps` and the median is `r median_total_steps`.
+The mean total number of steps taken per day is 1.0766 &times; 10<sup>4</sup> and the median is 10765.
 
 ## What is the average daily activity pattern?
-```{r daily activity pattern, echo=T}
+
+```r
 convert_to_time <- function(x) {
   paste0(as.integer(x/100),":", round((x/100 - as.integer(x/100)) * 100))
 }
@@ -47,17 +51,21 @@ plot(z, xlab = "Interval", ylab = "Average number of steps", type ="l", x = leve
 abline(v = as.numeric(names(which(z == max(z)))), col=3)
 ```
 
-The 5-minute interval in which on average across all the days contains the most number of steps is `r max_interval`.
+![plot of chunk daily activity pattern](figure/daily activity pattern.png) 
+
+The 5-minute interval in which on average across all the days contains the most number of steps is 104.
 
 ## Imputing missing values
 
-```{r how many rows with missing values, echo=T}
+
+```r
 rows_missing_values <- nrow(activity_data) - nrow(na.omit(activity_data))
 ```
 
-The activity data  has `r rows_missing_values` rows with missing values. Below, the NA's are replaced with the mean number of steps for the 5-minute interval.
+The activity data  has 2304 rows with missing values. Below, the NA's are replaced with the mean number of steps for the 5-minute interval.
 
-```{r replace the missing values with mean value and show histogram, echo=T}
+
+```r
 f_activity_data <- activity_data
 for (j in 1:nrow(f_activity_data)){
   f_activity_data$steps[j] <- ifelse (is.na(f_activity_data$steps[j]), z[as.factor(f_activity_data$interval)][j], f_activity_data$steps[j])
@@ -66,14 +74,17 @@ f_steps.date <- aggregate(steps ~ date, data = f_activity_data, FUN = sum)
 hist(f_steps.date$steps, breaks = 10, xlab = "Daily Number of Steps", main = "Histogram of steps per day\nafter replacing NA\'s with the\naverage number of steps for that interval")
 ```
 
+![plot of chunk replace the missing values with mean value and show histogram](figure/replace the missing values with mean value and show histogram.png) 
+
 And now recalculate the mean and median.
 
-```{r adjusted mean total steps, echo=T}
+
+```r
 f_mean_total_steps <- mean(f_steps.date$steps)
 f_median_total_steps <- median(f_steps.date$steps)
 ```
 
-Once the NA's are replaced with average number of steps for that interval, the new average of total number of steps taken per day is `r f_mean_total_steps` (compared to `r mean_total_steps` before) and the new median is `r f_median_total_steps` (compared to `r median_total_steps` before).
+Once the NA's are replaced with average number of steps for that interval, the new average of total number of steps taken per day is 1.0766 &times; 10<sup>4</sup> (compared to 1.0766 &times; 10<sup>4</sup> before) and the new median is 1.0766 &times; 10<sup>4</sup> (compared to 10765 before).
 
 The values don't change ina a meaningful way as expected, since the NA's were replaced by the averages.
 
@@ -81,7 +92,8 @@ The values don't change ina a meaningful way as expected, since the NA's were re
 
 We will first separate the weekdays and the weekends and then create two plots, one for the weekends and one for the weekdays.
 
-```{r are there differences between weekdays and weekends}
+
+```r
 weekdays <- function(x) {
   format(as.Date(x), "%a") %in% c("Mon", "Tue", "Wed", "Thu", "Fri")
 }
@@ -97,3 +109,5 @@ plot(z_weekday, xlab = "Interval", main="Weekday", ylab = "Average Daily Steps",
 axis(side = 1, labels =T)
 axis(side = 2, labels =T)
 ```
+
+![plot of chunk are there differences between weekdays and weekends](figure/are there differences between weekdays and weekends.png) 
